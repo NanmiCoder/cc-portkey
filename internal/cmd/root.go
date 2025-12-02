@@ -56,8 +56,9 @@ func handleAlias() bool {
 
 	// Check if basename matches any alias
 	if profileName, ok := config.AliasMapping[basename]; ok {
-		// Switch profile and launch Claude Code CLI
-		if err := switchToProfile(profileName, true); err != nil {
+		// Switch profile and launch Claude Code CLI with remaining arguments
+		claudeArgs := os.Args[1:]
+		if err := switchToProfile(profileName, true, claudeArgs); err != nil {
 			fmt.Println(red("Error:"), err)
 			os.Exit(1)
 		}

@@ -27,12 +27,12 @@ func init() {
 }
 
 func runUse(cmd *cobra.Command, args []string) error {
-	return switchToProfile(args[0], false)
+	return switchToProfile(args[0], false, nil)
 }
 
 // switchToProfile switches to the specified profile
-// If launchClaude is true, starts Claude Code CLI after switching
-func switchToProfile(profileName string, launchClaude bool) error {
+// If launchClaude is true, starts Claude Code CLI after switching with given args
+func switchToProfile(profileName string, launchClaude bool, claudeArgs []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return err
@@ -87,19 +87,25 @@ func switchToProfile(profileName string, launchClaude bool) error {
 	if launchClaude {
 		fmt.Println()
 		fmt.Printf("Starting Claude Code...\n\n")
-		return launchClaudeCLI()
+		return launchClaudeCLI(claudeArgs)
 	}
 
 	return nil
 }
 
 // launchClaudeCLI starts the Claude Code CLI, replacing the current process
-func launchClaudeCLI() error {
+func launchClaudeCLI(claudeArgs []string) error {
 	claudePath, err := exec.LookPath("claude")
 	if err != nil {
 		return fmt.Errorf("claude command not found. Is Claude Code CLI installed?")
 	}
 
+	// Build arguments: "claude" followed by any additional args
+	args := []string{"claude"}
+	if claudeArgs != nil {
+		args = append(args, claudeArgs...)
+	}
+
 	// Replace current process with claude (exec)
-	return syscall.Exec(claudePath, []string{"claude"}, os.Environ())
+	return syscall.Exec(claudePath, args, os.Environ())
 }
