@@ -1,3 +1,22 @@
+# Go binaries
+cc-portkey
+cc-portkey.exe
+*.exe
+*.exe~
+*.dll
+*.dylib
+
+# Go test binary
+*.test
+
+# Go coverage
+*.out
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
