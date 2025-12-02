@@ -1,6 +1,6 @@
-# Go binaries
-cc-portkey
-cc-portkey.exe
+# Go binaries (only in root directory)
+/cc-portkey
+/cc-portkey.exe
 *.exe
 *.exe~
 *.dll
