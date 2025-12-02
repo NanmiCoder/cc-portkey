@@ -1,72 +1,84 @@
 # cc-portkey
 
-A CLI tool for quickly switching Claude Code between different model providers (Claude, DeepSeek, GLM, MiniMax, etc.)
+![cc-portkey logo](assets/logo.png)
 
-## Features
+[English](./README_EN.md) | 中文
 
-- Switch between multiple API providers with a single command
-- Support for environment variable references in API keys (`${VAR_NAME}`)
-- Quick alias commands (`cc`, `ds`, `glm`, `mm`) for instant switching
-- Cross-platform support (Windows, macOS, Linux)
-- Preserves existing Claude Code settings when switching
+一个用于快速切换 Claude Code 模型服务商的命令行工具（支持 Claude、DeepSeek、GLM、MiniMax 等）
 
-## Installation
 
-### From Source (All Platforms)
 
-Requires [Go 1.21+](https://go.dev/dl/)
+> **为什么叫 Portkey?**
+>
+> Portkey（门钥匙）是《哈利·波特》中的魔法物品——碰一下就能瞬间传送到另一个地方。
+>
+> 这个工具也一样：敲一个命令，就能把 Claude Code 瞬移到另一个模型服务商。
+
+## 功能特性
+
+- 一条命令切换不同的 API 服务商
+- 支持环境变量引用 (`${VAR_NAME}`)
+- 快捷别名命令 (`ccc`, `ds`, `glm`, `mm`) 秒切
+- 跨平台支持 (Windows, macOS, Linux)
+- 切换时保留现有的 Claude Code 配置
+
+## 安装
+
+### 下载预编译二进制
+
+从 [Releases](https://github.com/NanmiCoder/cc-portkey/releases) 下载对应平台的二进制文件，放到 PATH 目录中。
+
+### 从源码编译（所有平台）
+
+需要 [Go 1.21+](https://go.dev/dl/)
 
 ```bash
-# Clone the repository
-git clone https://github.com/nanmi/cc-portkey.git
+# 克隆仓库
+git clone https://github.com/NanmiCoder/cc-portkey.git
 cd cc-portkey
 
-# Build
+# 编译
 go build -o cc-portkey ./cmd/cc-portkey/
 
-# Move to a directory in your PATH
+# 移动到 PATH 目录
 # Linux/macOS:
 sudo mv cc-portkey /usr/local/bin/
 
-# Windows (PowerShell as Admin):
+# Windows (管理员 PowerShell):
 Move-Item cc-portkey.exe C:\Windows\System32\
 ```
 
-### From Release Binary
-
-Download the latest binary from [Releases](https://github.com/nanmi/cc-portkey/releases) and add it to your PATH.
-
-## Quick Start
+## 快速开始
 
 ```bash
-# 1. Initialize (creates config + shortcut commands)
+# 1. 初始化（自动创建配置 + 快捷命令）
 cc-portkey init
 
-# 2. Edit config to add your API keys
+# 2. 编辑配置，添加你的 API Keys
 cc-portkey edit
 
-# 3. Launch Claude Code with different providers
+# 3. 一键启动（切换 + 启动 Claude Code）
 ds   # DeepSeek
-glm  # GLM
+glm  # GLM (智谱)
 mm   # MiniMax
-ccc  # Claude (Official)
+ccc  # Claude (官方)
 ```
 
-## Configuration
+## 配置说明
 
-### Config File Location
+### 配置文件位置
 
-- **Config file**: `~/.cc-portkey/config.json`
-- **Claude settings**: `~/.claude/settings.json` (modified by cc-portkey)
+- **cc-portkey 配置**: `~/.cc-portkey/config.json`
+- **Claude 配置**: `~/.claude/settings.json`（由 cc-portkey 修改）
 
-### Config File Structure
+### 配置文件结构
 
 ```json
 {
   "current": "claude",
   "profiles": {
     "claude": {
-      "display_name": "Claude (Official)",
+      "display_name": "Claude (官方)",
       "base_url": "",
       "api_key": "${ANTHROPIC_API_KEY}",
       "timeout_ms": 120000,
@@ -83,7 +95,7 @@ ccc  # Claude (Official)
       }
     },
     "glm": {
-      "display_name": "GLM (Zhipu)",
+      "display_name": "GLM (智谱)",
       "base_url": "https://open.bigmodel.cn/api/anthropic",
       "api_key": "${GLM_API_KEY}",
       "timeout_ms": 3000000,
@@ -109,23 +121,23 @@ ccc  # Claude (Official)
 }
 ```
 
-### Profile Fields
+### Profile 字段说明
 
-| Field | Description |
-|-------|-------------|
-| `display_name` | Human-readable name shown in output |
-| `base_url` | API endpoint URL (empty for official Claude) |
-| `api_key` | API key or `${ENV_VAR}` reference |
-| `timeout_ms` | Request timeout in milliseconds |
-| `models.default` | Default model name |
-| `models.small_fast` | Model for quick tasks |
-| `models.opus` | Model mapped to Claude Opus |
-| `models.sonnet` | Model mapped to Claude Sonnet |
-| `models.haiku` | Model mapped to Claude Haiku |
+| 字段 | 说明 |
+|------|------|
+| `display_name` | 显示名称 |
+| `base_url` | API 地址（官方 Claude 留空） |
+| `api_key` | API Key 或 `${环境变量}` 引用 |
+| `timeout_ms` | 请求超时（毫秒） |
+| `models.default` | 默认模型 |
+| `models.small_fast` | 快速任务模型 |
+| `models.opus` | 映射到 Claude Opus |
+| `models.sonnet` | 映射到 Claude Sonnet |
+| `models.haiku` | 映射到 Claude Haiku |
 
-### Environment Variables
+### 环境变量配置
 
-You can use environment variable references in your config:
+配置文件支持环境变量引用：
 
 ```json
 {
@@ -133,33 +145,34 @@ You can use environment variable references in your config:
 }
 ```
 
-Set the environment variable in your shell:
-
-**Linux/macOS** (`~/.bashrc` or `~/.zshrc`):
+**Linux/macOS** (添加到 `~/.bashrc` 或 `~/.zshrc`):
 ```bash
-# Claude (supports proxy)
+# Claude (支持中转)
 export ANTHROPIC_API_KEY="sk-ant-xxx"
-export ANTHROPIC_BASE_URL="https://your-proxy.com/v1"  # Optional, omit to use official API
+export ANTHROPIC_BASE_URL="https://your-proxy.com/v1"  # 可选，不设置则用官方
 
-# Other providers
+# 其他服务商
 export DEEPSEEK_API_KEY="sk-xxx"
 export GLM_API_KEY="xxx"
 export MINIMAX_API_KEY="xxx"
 ```
 
-**Windows** (PowerShell profile or System Environment):
+**Windows** (PowerShell 或系统环境变量):
 ```powershell
-$env:ANTHROPIC_API_KEY = "sk-ant-xxx"
+# 临时设置
 $env:DEEPSEEK_API_KEY = "sk-xxx"
+
+# 永久设置（需要管理员权限）
+[Environment]::SetEnvironmentVariable("DEEPSEEK_API_KEY", "sk-xxx", "User")
 ```
 
-Or set permanently via System Properties > Environment Variables.
+或通过 系统属性 > 环境变量 设置。
 
-## Commands
+## 命令列表
 
 ### `cc-portkey init`
 
-Initialize configuration with default profiles.
+初始化配置文件，生成默认 profiles。
 
 ```bash
 cc-portkey init
@@ -167,12 +180,12 @@ cc-portkey init
 
 ### `cc-portkey list`
 
-List all configured profiles.
+列出所有配置的 profiles。
 
 ```bash
 cc-portkey list
 
-# Output:
+# 输出:
 # Profiles:
 #
 # * claude        Claude (Official)  [current]
@@ -183,12 +196,12 @@ cc-portkey list
 
 ### `cc-portkey use <profile>`
 
-Switch to the specified profile.
+切换到指定的 profile。
 
 ```bash
 cc-portkey use deepseek
 
-# Output:
+# 输出:
 # OK Switched to deepseek (DeepSeek)
 #
 #   Base URL:  https://api.deepseek.com/anthropic
@@ -196,102 +209,52 @@ cc-portkey use deepseek
 #   Model:     deepseek-chat
 ```
 
-### `cc-portkey current`
-
-Show the currently active profile.
-
-```bash
-cc-portkey current
-# Output: deepseek (DeepSeek)
-```
-
-### `cc-portkey show [profile]`
-
-Show detailed configuration of a profile (API key is masked).
-
-```bash
-cc-portkey show deepseek
-```
-
-### `cc-portkey add <profile>`
-
-Add a new profile interactively.
-
-```bash
-cc-portkey add openrouter
-```
-
-### `cc-portkey remove <profile>`
-
-Remove a profile.
-
-```bash
-cc-portkey remove openrouter
-```
-
 ### `cc-portkey edit`
 
-Open config file in your default editor (`$EDITOR`).
+用编辑器打开配置文件（使用 `$EDITOR`）。
 
 ```bash
 cc-portkey edit
 ```
 
-### `cc-portkey link [directory]`
+## 快捷别名
 
-Create shortcut symlinks for quick switching.
+`init` 命令会自动在 `~/.local/bin/` 创建以下快捷命令：
 
-```bash
-cc-portkey link              # Creates in ~/.local/bin/
-cc-portkey link /usr/local/bin  # Custom directory
-```
-
-### `cc-portkey unlink [directory]`
-
-Remove shortcut symlinks.
-
-```bash
-cc-portkey unlink
-```
-
-## Quick Aliases
-
-The `init` command automatically creates these shortcuts in `~/.local/bin/`:
-
-| Alias | Action |
-|-------|--------|
+| 别名 | 作用 |
+|------|------|
 | `ds` | DeepSeek |
-| `glm` | GLM |
+| `glm` | GLM (智谱) |
 | `mm` | MiniMax |
-| `ccc` | Claude (Official) |
+| `ccc` | Claude (官方) |
 
-### Setup by Platform
+### 各平台设置方法
 
 #### Linux/macOS
 
 ```bash
-# Create symlinks
+# 创建符号链接
 cc-portkey link
 
-# Add ~/.local/bin to PATH if not already (add to ~/.bashrc or ~/.zshrc)
+# 确保 ~/.local/bin 在 PATH 中（添加到 ~/.bashrc 或 ~/.zshrc）
 export PATH="$HOME/.local/bin:$PATH"
 
-# Reload shell config
-source ~/.bashrc  # or source ~/.zshrc
+# 重新加载配置
+source ~/.bashrc  # 或 source ~/.zshrc
 ```
 
 #### Windows
 
-**Option 1: Symlinks (requires Admin)**
+**方式一：符号链接（需要管理员权限）**
 
 ```powershell
-# Run PowerShell as Administrator
+# 以管理员身份运行 PowerShell
 cc-portkey link C:\Windows\System32
 ```
 
-**Option 2: Batch files**
+**方式二：批处理文件**
 
-Create batch files in a directory in your PATH:
+在 PATH 目录中创建批处理文件：
 
 `ccc.bat`:
 ```batch
@@ -305,9 +268,9 @@ cc-portkey use claude
 cc-portkey use deepseek
 ```
 
-## How It Works
+## 工作原理
 
-cc-portkey modifies `~/.claude/settings.json` to set environment variables that Claude Code reads on startup:
+cc-portkey 通过修改 `~/.claude/settings.json` 的 `env` 字段来切换配置：
 
 ```json
 {
@@ -321,17 +284,17 @@ cc-portkey modifies `~/.claude/settings.json` to set environment variables that 
 }
 ```
 
-Your existing settings in `settings.json` are preserved.
+你在 `settings.json` 中的其他配置会被保留。
 
-## Adding Custom Providers
+## 添加自定义服务商
 
-Edit your config file to add any provider with Anthropic-compatible API:
+编辑配置文件添加任何兼容 Anthropic API 的服务商：
 
 ```bash
 cc-portkey edit
 ```
 
-Add a new profile:
+添加新的 profile：
 
 ```json
 {
@@ -349,29 +312,29 @@ Add a new profile:
 }
 ```
 
-## Troubleshooting
+## 常见问题
 
 ### "config file not found"
 
-Run `cc-portkey init` to create the default configuration.
+运行 `cc-portkey init` 创建默认配置。
 
-### API Key shows as `${VAR...}`
+### API Key 显示为 `${VAR...}`
 
-The environment variable is not set. Either:
-1. Set the environment variable: `export DEEPSEEK_API_KEY=sk-xxx`
-2. Or put the actual key in the config file (less secure)
+环境变量未设置。两种解决方式：
+1. 设置环境变量：`export DEEPSEEK_API_KEY=sk-xxx`
+2. 直接在配置文件中写入 API Key（安全性较低）
 
-### Symlinks not working on Windows
+### Windows 上符号链接不工作
 
-Windows requires Administrator privileges to create symlinks. Either:
-1. Run PowerShell as Administrator
-2. Use batch files instead (see Windows setup section)
-3. Enable Developer Mode in Windows Settings
+Windows 创建符号链接需要管理员权限。解决方式：
+1. 以管理员身份运行 PowerShell
+2. 使用批处理文件代替（见上方 Windows 设置）
+3. 在 Windows 设置中开启开发者模式
 
-### Changes not taking effect
+### 切换后不生效
 
-Claude Code reads `settings.json` on startup. If Claude Code is already running, restart it to apply changes.
+Claude Code 在启动时读取 `settings.json`。如果 Claude Code 正在运行，需要重启它才能应用新配置。
 
-## License
+## 许可证
 
 Apache License 2.0
